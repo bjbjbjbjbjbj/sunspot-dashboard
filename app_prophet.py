@@ -82,27 +82,12 @@ st.pyplot(fig2)
 # ----------------------------------
 st.subheader("📉 Custom Plot: Actual vs Predicted with Prediction Intervals")
 
-# 원본 전체 데이터 로드 (1700년부터 시각화를 위해)
-original_path = "sunspots.csv"
-if not os.path.exists(original_path):
-    original_path = "../sunspots.csv"
-if not os.path.exists(original_path):
-    original_path = "data/sunspots.csv"
-
-if os.path.exists(original_path):
-    df_full = pd.read_csv(original_path)
-    df_full["YEAR"] = df_full["YEAR"].astype(int)
-    df_full["ds"] = pd.to_datetime(df_full["YEAR"], format="%Y")
-    df_full = df_full.rename(columns={"SUNACTIVITY": "y"})
-else:
-    df_full = df  # 없으면 학습 데이터만 사용
-
 fig3, ax = plt.subplots(figsize=(14, 6))
 
-# 실제 데이터 (파란색 실선 + 마커)
+# 실제 데이터 (파란색 실선 + 마커) - df 사용 (1900년 이후)
 ax.plot(
-    df_full["ds"],
-    df_full["y"],
+    df["ds"],
+    df["y"],
     label="Actual",
     color="blue",
     marker="o",
@@ -118,7 +103,7 @@ ax.plot(
     linestyle="--",
     linewidth=2,
 )
-# 신뢰구간 (옅은 빨간색 영역)
+# 신뢰구간 (빨간색 영역)
 ax.fill_between(
     forecast["ds"],
     forecast["yhat_lower"],
@@ -146,6 +131,7 @@ merged["residual"] = merged["y"] - merged["yhat"]
 
 # 잔차 시각화
 fig4, ax2 = plt.subplots(figsize=(14, 4))
+# 잔차 시각화 (자주색 실선 + 마커)
 ax2.plot(
     merged["ds"],
     merged["residual"],
